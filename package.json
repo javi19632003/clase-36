@@ -1,0 +1,27 @@
+{
+  "name": "clase-36",
+  "version": "1.0.0",
+  "description": "Tercera entrega proyecto final",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javi19632003/clase-36.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/javi19632003/clase-36/issues"
+  },
+  "homepage": "https://github.com/javi19632003/clase-36#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.6.6",
+    "uuid": "^9.0.0"
+  }
+}
