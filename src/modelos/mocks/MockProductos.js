@@ -4,7 +4,7 @@ import { productos } from "./productos.js";
 
 try {
   mongoose.connect(
-    "mongodb://localhost:27017/ecommerce",
+    "mongodb+srv://ajn:LaEncontre@cluster0.2sqrs.mongodb.net/test",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -14,6 +14,7 @@ try {
   console.log(e);
 }
 
+console.log("conectado")
 
 
 await creroMockProductos()

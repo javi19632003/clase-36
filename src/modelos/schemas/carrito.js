@@ -3,13 +3,15 @@ import mongoose from "mongoose";
 const carritoCollection = "carritos";
 
 const carritoSchema = new mongoose.Schema({
-  id: { type: Number, required: true, unique: true },
+  id: { type: String, required: true, unique: true },
   productos: [
     {
         idProducto: Number,
+        cantidad: Number,
+        preuni: Number
     }
 ],
-  nombre: { type: String, required: true, max: 100 }
+ 
 }, {
   versionKey: false 
 });

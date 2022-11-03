@@ -5,6 +5,7 @@ import {rutaCarrito, rutaProductos} from './rutas/index.js'
 dotenv.config();
 const app = express();
 
+
 const PORT = process.env.PORT || 8080
 
 app.use(express.json())

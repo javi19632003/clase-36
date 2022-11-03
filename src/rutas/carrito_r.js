@@ -3,21 +3,28 @@ import { carritoApi, productosApi } from "../controladores/index.js"
 
 const rutaCarrito = Router()
 
-rutaCarrito.get('/', async (req, res) => {
+
+rutaCarrito.get('/:id?', async (req, res) => {
     try {
-        const carritos = await carritoApi.mostrarTodos()
-        
-        res.json(carritos)
+        const {id} = req.params
+        if(id){
+            const respuesta = await carritoApi.mostrarPorId(id)   
+            if(!respuesta) return res.json({message: 'Carrito no encontrado'})
+            res.json(respuesta)
+        } else {
+            const carritos = await carritoApi.mostrarTodos()
+            res.json(carritos)
+        }
     } catch (error) {
         res.json(error)
     }
 })
 
+
 rutaCarrito.post('/', async (req, res) => {
     try {
-        const { nombre } = req.body
-        const id = 0;
-        const carrito = await carritoApi.guardarElemento({nombre, productos: []})
+        const { id, productos } = req.body
+        const carrito = await carritoApi.actualizarCarrito({id, productos})
 
         res.json(carrito)
     } catch (error) {
@@ -25,33 +32,15 @@ rutaCarrito.post('/', async (req, res) => {
     }
 })
 
-rutaCarrito.post('/:id/productos', async (req, res) => {
+
+rutaCarrito.delete('/:id?', async (req, res) => {
     try {
         const {id} = req.params
-        const {productoId} = req.body
-        const carrito = await carritoApi.mostrarPorId(id)
-        const producto = await productosApi.mostrarPorId(productoId)
-        carrito.productos =  [...carrito.productos, producto]
-        
-        const respuesta = await carritoApi.actualizar(id, carrito)
-
+        const respuesta = await carritoApi.eliminarPorId(id)   
         res.json(respuesta)
-
     } catch (error) {
         res.json(error)
     }
 })
-
-rutaCarrito.get('/:id/productos', async (req,res) => {
-    try {
-        const {id} = req.params
-        const respuesta = await carritoApi.mostrarPorId(id)   
-        if(!respuesta.productos) return res.json({message: 'Carrito no encontrado'})
-        res.json(respuesta.productos)
-    } catch (error) {
-        res.json(error)
-    }
-})
-
 
 export {rutaCarrito}

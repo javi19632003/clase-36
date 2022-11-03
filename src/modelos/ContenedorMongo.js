@@ -1,4 +1,7 @@
-import mongoose from "mongoose";
+import dotenv                   from "dotenv";
+import mongoose                 from "mongoose";
+import { productos }            from "./schemas/productos.js";
+dotenv.config();
 
 if (process.env.SELECTED_DB == "mongo"){
     try {
@@ -21,30 +24,61 @@ class ContenedorMongo {
         this.coleccion = nombreColeccion  
     }
 
+    // muestra todos CHECK OK
+   async mostrarTodos() {
+        const docs = await this.coleccion.find();
+        return docs 
+     }
 
-    async mostrarTodos() {
-        try {
-            console.log(this.coleccion)
-            const resultado = await this.coleccion.find()
-            return resultado
-        } catch (error) {
-            throw new Error(error)        
-        }
-    }
+    async nuevoProducto(nuevoElemento){
 
-    async guardarElemento(nuevoElemento){
+        
+        
         try {
-            const nuevo = new this.coleccion(nuevoElemento)
-            nuevo.save( function(err, prod){
-                if (err) return console.error(err);
-                    console.log(prod);
-                    
-            })
-            return {"OK":"OK"} 
+            const maximo = await this.coleccion.find().sort({id: -1}).limit(1);
+            const nuevo  = new this.coleccion(nuevoElemento)
+            nuevo.id     = maximo[0].id+1
+            const err    = await nuevo.save().catch(err => err);
+            if (!err.id){
+                return {menssage : "No se actualizó el Producto"};     
+            }  else {
+                return err 
+            }
+    
+
         } catch (error) {
             throw new Error(error)
         }
     }
+
+    async actualizarProducto(id, nuevaData){
+        try {
+            const elementoActualizado = this.coleccion.findOneAndUpdate({id:id}, {$set: nuevaData},
+                {returnOriginal : false})
+            return elementoActualizado
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+    async actualizarCarrito(nuevoElemento){
+       const nuevo = new this.coleccion(nuevoElemento)
+       const resultado = await this.coleccion.findOne({id: nuevo.id})
+       if (!resultado){
+            const err = await nuevo.save().catch(err => err);
+            if (!err.id){
+                return {menssage : "No se dió de alta el Carrito"};     
+            }  else {
+                return err 
+            }
+        } else {
+            const err = await this.coleccion.findOneAndUpdate({id:nuevo.id}, {productos: nuevo.productos},
+                {returnOriginal : false});
+             return err 
+        }
+    }
+
+    
 
     async mostrarPorId(id){
         try {
@@ -55,20 +89,12 @@ class ContenedorMongo {
         }
     }
 
-    async actualizar(id, nuevaData){
-        try {
-            const elementoActualizado = this.coleccion.findOneAndUpdate({id:id}, {$set: nuevaData})
-            return elementoActualizado
-        } catch (error) {
-            throw new Error(error)
-        }
-    }
-
     async eliminarPorId(id){
         try {
             const elementoeliminado = await this.coleccion.deleteOne({id: id})
-            return elementoeliminado
-            
+            if(elementoeliminado.deletedCount == 1) return {message: 'Producto dado de baja'}
+            return {message: 'Producto no encontrado'}
+    
         } catch (error) {
             throw new Error(error)
         }

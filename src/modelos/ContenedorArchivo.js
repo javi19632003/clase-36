@@ -16,15 +16,13 @@ class ContenedorArchivo {
         }
     }
 
-    async guardarElemento(nuevoElemento){
+    async nuevoProducto(nuevoElemento){
         try {
-            console.log("entre")
             const elementos = await this.mostrarTodos()
             console.log(elementos)
             const ultimoElemento = elementos[elementos.length -1]
             console.log(ultimoElemento)
             if(ultimoElemento == undefined){
-                console.log("ifffff")
                 nuevoElemento.id = 1
             }  else { 
                 nuevoElemento.id  = ultimoElemento ? ultimoElemento.id + 1 : 1
@@ -52,7 +50,7 @@ class ContenedorArchivo {
         }
     }
 
-    async actualizar(id, nuevaData){
+    async actualizarProducto(id, nuevaData){
         try {
             const elementos = await this.mostrarTodos()
             const elementoIndex = elementos.findIndex(elemento => elemento.id === parseInt(id))
@@ -80,7 +78,7 @@ class ContenedorArchivo {
             elementos.splice(elementoIndex, 1)
             await fs.writeFile(this.nombreArchivo, JSON.stringify(elementos))
 
-            return elementoEncontrado
+            return {message: 'elemento dado de baja'}
 
             
         } catch (error) {

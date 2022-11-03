@@ -4,6 +4,7 @@ import {productosApi} from '../controladores/index.js'
 
 const rutaProductos = Router()
 
+// Mostrar todos o un solo producto según su id
 rutaProductos.get('/:id?', async (req, res) => {
     try {
         const {id} = req.params
@@ -18,43 +19,37 @@ rutaProductos.get('/:id?', async (req, res) => {
     }
 
 })
-    
 
+// Dar de alta un nuevo producto
 rutaProductos.post('/', async (req, res) => {
-    const { id,nombre,descripcion,precio,foto } = req.body.data
-    const { admin }  = req.body
+    const { id,nombre,descripcion,precio,foto } = req.body
     const timestamp  = Date.now()
-    if (!admin) return res.send('Debe ser Administrador para utilizar este recurso')
-    if(!nombre || !precio || !foto) return res.send('Debe completar todos los campos')
-    const respuesta = await productosApi.guardarElemento({id,timestamp,nombre,descripcion,precio,foto})
+    if(!nombre || !precio || !foto) return res.json({menssage:'Debe completar todos los campos'})
+
+    const respuesta = await productosApi.nuevoProducto({id,timestamp,nombre,descripcion,precio,foto})
     
     res.json(respuesta)
    
     
 })
 
+// Modificar un producto existente
 rutaProductos.put('/:id', async (req, res) => {
     const {id} = req.params
-    const {nombre,descripcion,precio,foto} = req.body.data
-    const { admin }                        = req.body
-    if (!admin) return res.send('Debe ser Administrador para utilizar este recurso')
-
-    const respuesta = await productosApi.actualizar(id, {nombre,descripcion,precio,foto})
+    const {nombre,descripcion,precio,foto} = req.body
+    const respuesta = await productosApi.actualizarProducto(id, {nombre,descripcion,precio,foto})
 
     res.json(respuesta)
 })
 
-rutaProductos.delete('/:id?', async (req,res) => {
-    const {id}    = req.params
-    const {admin} = req.body
-    if (!admin) return res.send('Debe ser Administrador para utilizar este recurso')
+
+// Borrar Un Producto 
+rutaProductos.delete('/:id', async (req,res) => {
+   const {id} = req.params
    if(id){
         const respuesta = await productosApi.eliminarPorId(id)
         res.json(respuesta)
-        return
     }
 })
-
-
 
 export {rutaProductos}

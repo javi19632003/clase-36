@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { Carrito } from "./carrito.js";
+import { carritos } from "./carrito.js";
 
 CRUD();
 
 async function CRUD() {
   try {
     mongoose.connect(
-      "mongodb://localhost:27017/ecommerce",
+      "mongodb+srv://ajn:LaEncontre@cluster0.2sqrs.mongodb.net/test",
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -20,14 +20,13 @@ async function CRUD() {
 
     console.log("CREATE");
     const carritoData =[
-        {"nombre":"Alejandro",
+        {"id":"Alejandro",
          "productos":[],
-         "id":1
         }
   ];
 
     carritoData.forEach(async (carrito) => {
-      const carritoNuevo = new Carrito(carrito);
+      const carritoNuevo = new carritos(carrito);
       await carritoNuevo.save();
     });
 
