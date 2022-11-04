@@ -3,9 +3,8 @@ import mongoose from "mongoose";
 const usuariosCollection = "usuarios";
 
 const usuariosSchema = new mongoose.Schema({
-  id: { type: Number, required: true, unique: true },
+  email: { type: String, required: true, max: 100, unique: true },
   nombre: { type: String, required: true, max: 80 },
-  email: { type: String, required: true, max: 100 },
   direccion: { type: String, required: true, max: 80 },
   telefono: { type: String, required: true, max: 25 },
   pass: { type: String, required: true, max: 25 },

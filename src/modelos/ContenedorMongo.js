@@ -89,6 +89,17 @@ class ContenedorMongo {
         }
     }
 
+
+    async veoUsuario(email){
+        try {
+            const resultado = await this.coleccion.findOne({email: email})
+            return resultado
+        } catch (error) {
+            return error
+        }
+    }
+
+
     async eliminarPorId(id){
         try {
             const elementoeliminado = await this.coleccion.deleteOne({id: id})

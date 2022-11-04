@@ -1,5 +1,4 @@
 import {Router} from 'express'
-//import { isAdministrator } from '../middlewares/index.js'
 import {productosApi} from '../controladores/index.js'
 
 const rutaProductos = Router()
