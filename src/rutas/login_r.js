@@ -1,9 +1,10 @@
-import {Router}                 from 'express'
-import passport                 from "passport";
-import { Strategy }             from "passport-local";
-import jwt                      from "jsonwebtoken";
-import dotenv                   from "dotenv";
 import express                  from "express";
+import session                  from "express-session";
+import passport                 from "passport";
+//import jwt                      from "jsonwebtoken";
+import dotenv                   from "dotenv";
+import {Router}                 from 'express'
+import { Strategy }             from "passport-local";
 import {usuarioApi}             from '../controladores/index.js'
 
 dotenv.config();
@@ -13,29 +14,29 @@ const LocalStrategy = Strategy;
 const PRIVATE_KEY   = process.env.PRIVATE_KEY || "mi_token_secreto";
 
 /*----------- Session -----------*/
-/*
+
 app.use(
     session({
-      secret: "pepe",
+      secret: PRIVATE_KEY,
       resave: false,
       saveUninitialized: false,
     })
   );
-*/
+
   app.use(passport.initialize());
   app.use(passport.session());
   
   passport.use(
     new LocalStrategy(
-      {usernameField: "email"},
-      (email, password, done) => {
-      console.log("ingrese a strategy")
-      const myusuario = usuarioApi.veoUsuario(email)
-      console.log(myusuario)
-      if (email == "Diego" && password == "1234")
-        return done(null, myusuario);
-  
-      done(null, false);
+      {usernameField: "email",
+      passwordField: "pass"},
+      async (email, pass, done) => {
+      
+      const usuario =  await usuarioApi.veoUsuario(email);
+      if(!usuario) return done(null, false);
+
+     console.log(usuario) 
+     done(null, usuario); 
     })
   );
 
@@ -49,17 +50,21 @@ app.use(
     done(null, user);
   });
 
+  function auth(req, res, next) {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      res.send("login-error");
+    }
+  }  
 
-
-rutaLogin.post('/', passport.authenticate("local"), (req, res) => {
-  try {
-      console.log(req.user)
-      res.send("estoy")
-  } catch (error) {
-      res.json(error)
-  }
-
-})
+  rutaLogin.post("/", passport.authenticate("local"), (req, res) => {
+    if (!req.user) {
+      res.send("login-error");
+    } else {
+      res.send("/datos");
+    }
+  });
 
 
 export {rutaLogin}
