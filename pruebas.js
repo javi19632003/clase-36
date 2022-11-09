@@ -10,9 +10,11 @@ const hash = await bcrypt.hash(pass, xsalt).then(function(hashed){
 });
 console.log(hash);
 
+
 const comparo = await bcrypt.compare(pass, hash).then(function(comparado){
     return comparado
 });
 
 console.log(comparo);
 
+ 

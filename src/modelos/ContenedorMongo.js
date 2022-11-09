@@ -31,9 +31,6 @@ class ContenedorMongo {
      }
 
     async nuevoProducto(nuevoElemento){
-
-        
-        
         try {
             const maximo = await this.coleccion.find().sort({id: -1}).limit(1);
             const nuevo  = new this.coleccion(nuevoElemento)
