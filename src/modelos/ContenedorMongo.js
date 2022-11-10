@@ -24,11 +24,85 @@ class ContenedorMongo {
         this.coleccion = nombreColeccion  
     }
 
-    // muestra todos CHECK OK
-   async mostrarTodos() {
+/*   Funciones Generales */
+
+    async mostrarTodos() {
         const docs = await this.coleccion.find();
         return docs 
      }
+
+
+    
+
+    async mostrarPorId(id){
+        try {
+            const resultado = await this.coleccion.findOne({id: id})
+            return resultado
+        } catch (error) {
+            return error
+        }
+    }
+
+
+    async eliminarPorId(id){
+        try {
+            const elementoeliminado = await this.coleccion.deleteOne({id: id})
+            if(elementoeliminado.deletedCount == 1) return {message: 'Producto dado de baja'}
+            return {message: 'Producto no encontrado'}
+    
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+/*   Funciones solo de usuarios  */
+
+    async veoUsuario(email){
+        try {
+            const resultado = await this.coleccion.findOne({email: email})
+            return resultado
+        } catch (error) {
+            return error
+        }
+    }
+
+    async nuevoUsuario(nuevoElemento){
+        try {
+            const nuevo  = new this.coleccion(nuevoElemento)
+            const err    = await nuevo.save().catch(err => err);
+            if (!err.email){
+                return {menssage : "No se dió de alta el Usuario"};     
+            }  else {
+                return err 
+            }
+
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+
+
+
+/*   Funciones solo de Carrito */
+
+    async actualizarCarrito(nuevoElemento){
+        const nuevo = new this.coleccion(nuevoElemento)
+        const resultado = await this.coleccion.findOne({id: nuevo.id})
+        if (!resultado){
+            const err = await nuevo.save().catch(err => err);
+            if (!err.id){
+                return {menssage : "No se dió de alta el Carrito"};     
+            }  else {
+                return err 
+            }
+        } else {
+            const err = await this.coleccion.findOneAndUpdate({id:nuevo.id}, {productos: nuevo.productos},
+                {returnOriginal : false});
+            return err 
+        }
+    }
+
+/*   Funciones solo de Productos */
 
     async nuevoProducto(nuevoElemento){
         try {
@@ -58,55 +132,9 @@ class ContenedorMongo {
         }
     }
 
-    async actualizarCarrito(nuevoElemento){
-       const nuevo = new this.coleccion(nuevoElemento)
-       const resultado = await this.coleccion.findOne({id: nuevo.id})
-       if (!resultado){
-            const err = await nuevo.save().catch(err => err);
-            if (!err.id){
-                return {menssage : "No se dió de alta el Carrito"};     
-            }  else {
-                return err 
-            }
-        } else {
-            const err = await this.coleccion.findOneAndUpdate({id:nuevo.id}, {productos: nuevo.productos},
-                {returnOriginal : false});
-             return err 
-        }
-    }
 
-    
-
-    async mostrarPorId(id){
-        try {
-            const resultado = await this.coleccion.findOne({id: id})
-            return resultado
-        } catch (error) {
-            return error
-        }
-    }
-
-
-    async veoUsuario(email){
-        try {
-            const resultado = await this.coleccion.findOne({email: email})
-            return resultado
-        } catch (error) {
-            return error
-        }
-    }
-
-
-    async eliminarPorId(id){
-        try {
-            const elementoeliminado = await this.coleccion.deleteOne({id: id})
-            if(elementoeliminado.deletedCount == 1) return {message: 'Producto dado de baja'}
-            return {message: 'Producto no encontrado'}
-    
-        } catch (error) {
-            throw new Error(error)
-        }
-    }
 }
+
+
 
 export {ContenedorMongo}
